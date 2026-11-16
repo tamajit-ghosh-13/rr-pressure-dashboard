@@ -43,10 +43,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <style>
-    body {
+    html, body {
       background-color: #07192F;
       color: #1E293B;
       font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
     .rr-gradient {
       background: linear-gradient(135deg, #0B2545 0%, #134074 100%);
@@ -156,7 +158,6 @@
         <a href="#war-room" class="hover:text-rr-gold transition">RR War Room</a>
         <a href="#simulator" class="hover:text-rr-gold transition">Simulator</a>
         <a href="#radar" class="hover:text-rr-gold transition">Radar Deep-Dive</a>
-        <a href="#methodology" class="hover:text-rr-gold transition">Methodology</a>
       </nav>
 
       <div class="flex items-center gap-3">
@@ -181,8 +182,8 @@
 
       <!-- Hero Briefing Card -->
       <div class="rr-gradient p-6 sm:p-8 text-white border-l-4 border-rr-pink shadow-xl">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div class="space-y-3 max-w-3xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden">
+          <div class="space-y-3 max-w-3xl hero-card-left">
             <div class="inline-flex items-center gap-2 px-2.5 py-0.5 text-xs font-semibold bg-rr-pink text-white">
               Official Round 1 Submission
             </div>
@@ -195,7 +196,7 @@
               Operating under <strong>Symmetric Wicket Valuation (<span class="font-mono">W_val = 2.50 runs</span>)</strong> and independent match-ANOVA shrinkage to filter small-sample dismissal noise.
             </p>
           </div>
-          <div class="grid grid-cols-2 gap-3 min-w-[280px]">
+          <div class="grid grid-cols-2 gap-3 min-w-[280px] hero-card-right">
             <div class="bg-rr-navy-dark/70 p-3 border border-white/10 hero-stat-box">
               <div class="text-xs text-rr-gold font-medium">Matches Scanned</div>
               <div id="hero-count-matches" class="text-xl font-bold text-white font-mono">837</div>
@@ -253,7 +254,7 @@
       </div>
 
       <!-- Complete Dropdown Table View -->
-      <div class="rr-card overflow-hidden">
+      <div id="dropdown-table-container" class="rr-card overflow-hidden">
         <div class="px-5 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <div class="text-xs font-bold text-rr-navy uppercase tracking-wider" id="table-title">
             Top 10 Batters — Dropdown Audited Specifications
@@ -309,7 +310,7 @@
       </div>
 
       <!-- Distinct Unit 1: BATTING UNIT -->
-      <div class="space-y-3 pt-2">
+      <div id="war-room-batting-section" class="space-y-3 pt-2">
         <div class="flex items-center justify-between bg-rr-navy-dark border-l-4 border-rr-pink px-4 py-2.5">
           <div class="flex items-center gap-2.5">
             <span class="text-base">🏏</span>
@@ -323,7 +324,7 @@
       </div>
 
       <!-- Distinct Unit 2: BOWLING UNIT -->
-      <div class="space-y-3 pt-4 border-t border-slate-700/40">
+      <div id="war-room-bowling-section" class="space-y-3 pt-4 border-t border-slate-700/40">
         <div class="flex items-center justify-between bg-rr-navy-dark border-l-4 border-rr-gold px-4 py-2.5">
           <div class="flex items-center gap-2.5">
             <span class="text-base">🎯</span>
@@ -348,7 +349,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Slider Controls Card -->
-        <div class="rr-card p-5 space-y-5">
+        <div id="sim-controls-card" class="rr-card p-5 space-y-5">
           <div class="border-b border-slate-200 pb-2">
             <h3 class="text-xs font-bold text-rr-navy uppercase tracking-wider">Custom Pillar Weight Calibration</h3>
             <p class="text-[11px] text-slate-500">Adjust weights to test ranking sensitivity in real-time.</p>
@@ -407,7 +408,7 @@
         </div>
 
         <!-- Simulated Ranks Output Card -->
-        <div class="lg:col-span-2 rr-card p-5 overflow-hidden flex flex-col justify-between">
+        <div id="sim-results-card" class="lg:col-span-2 rr-card p-5 overflow-hidden flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
               <h3 class="text-xs font-bold text-rr-navy uppercase tracking-wider">Simulated Top 10 Order (<span id="sim-role-disp">Batters</span>)</h3>
@@ -450,7 +451,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Player Selectors -->
-        <div class="rr-card p-5 space-y-4">
+        <div id="radar-controls-card" class="rr-card p-5 space-y-4">
           <div class="border-b border-slate-200 pb-2">
             <h3 class="text-xs font-bold text-rr-navy uppercase tracking-wider">Select Players to Compare</h3>
             <p class="text-[11px] text-slate-500">Compare up to 3 players across all 5 pressure pillars.</p>
@@ -484,71 +485,9 @@
         </div>
 
         <!-- Radar Canvas Card -->
-        <div class="lg:col-span-2 rr-card p-5 flex flex-col items-center justify-center">
+        <div id="radar-chart-card" class="lg:col-span-2 rr-card p-5 flex flex-col items-center justify-center">
           <div class="w-full max-w-lg h-[360px]">
             <canvas id="radarCanvas"></canvas>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- METHODOLOGICAL FOUNDATIONS                 -->
-    <!-- ========================================== -->
-    <section id="methodology" class="space-y-6">
-      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
-        <h2 class="text-lg font-bold text-white tracking-tight uppercase">Methodological Foundations &amp; Gate D1 Validation</h2>
-        <span class="text-xs font-mono text-slate-400">Forensic Traps Audit</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <!-- Forensic Trap 1: Gate D1 -->
-        <div class="rr-card p-5 space-y-3 border-t-4 border-rr-pink">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono px-2 py-0.5 bg-rr-badge-pink text-rr-pink font-bold">CRITICAL DATA TRAP</span>
-            <span class="text-[11px] font-mono text-slate-400">Gate D1</span>
-          </div>
-          <h3 class="text-sm font-bold text-rr-navy">The `extras1_runs` Trap &amp; Resolution</h3>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            In raw <code class="text-[11px] bg-slate-100 p-0.5">ball_by_ball.csv</code>, <code class="text-[11px] bg-slate-100 p-0.5">extras1_runs</code> is a delivery type code (wide=2, bye=4, legal=6), NOT additive runs. Naive summation adds +6 runs to every legal ball.
-          </p>
-          <div class="p-2.5 bg-slate-50 border border-slate-200 font-mono text-[11px] text-slate-700">
-            <div>• Summing extras1: 5.2 run error</div>
-            <div class="text-emerald-700 font-bold">• Gate D1 repaired: 2.6 run error</div>
-          </div>
-        </div>
-
-        <!-- Forensic Trap 2: Symmetric Sweep -->
-        <div class="rr-card p-5 space-y-3 border-t-4 border-rr-navy-light">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono px-2 py-0.5 bg-rr-badge-navy text-rr-navy font-bold">EMPIRICAL ABLATION</span>
-            <span class="text-[11px] font-mono text-slate-400">Plateau [1.0, 3.0]</span>
-          </div>
-          <h3 class="text-sm font-bold text-rr-navy">Symmetric Wicket Sweep ($W_{\text{val}} = 2.50$)</h3>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            Batters are penalized 2.50 runs per dismissal above expected; bowlers receive 2.50 runs credit. Across $W \in [1.0, 3.0]$, Top-10 overlap is stable (≥80%) and reliability flat ($\rho \approx 0.26$ to $0.28$).
-          </p>
-          <div class="p-2.5 bg-slate-50 border border-slate-200 font-mono text-[11px] text-slate-700">
-            <div>• W=0:Ignores dismissals</div>
-            <div>• W≥6: Variance collapse (ρ=0.16)</div>
-            <div class="text-rr-pink font-bold">• W=2.5: Calibrated Midpoint</div>
-          </div>
-        </div>
-
-        <!-- Forensic Trap 3: Bumrah Paradox -->
-        <div class="rr-card p-5 space-y-3 border-t-4 border-rr-gold">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono px-2 py-0.5 bg-rr-badge-gold text-amber-800 font-bold">DOMAIN LOGIC</span>
-            <span class="text-[11px] font-mono text-slate-400">Bumrah Paradox</span>
-          </div>
-          <h3 class="text-sm font-bold text-rr-navy">Resolving the Jasprit Bumrah Paradox</h3>
-          <p class="text-xs text-slate-600 leading-relaxed">
-            Opponents treat Bumrah's death overs as a storm to weather. While raw wickets are 17 in 455 balls, his boundary rate is only 16.9% (vs 20.8% league avg) with cohort-topping Rebound Composure (+0.483 PBC).
-          </p>
-          <div class="p-2.5 bg-slate-50 border border-slate-200 font-mono text-[11px] text-slate-700">
-            <div>• High-Pressure Economy: 7.78</div>
-            <div>• Boundary Suppression: 83.1%</div>
-            <div class="text-emerald-700 font-bold">• Ranked #2 Bowler Under Pressure</div>
           </div>
         </div>
       </div>
@@ -922,19 +861,41 @@
         }
       });
 
-      // Section Fade and Slide Up on Scroll
-      gsap.utils.toArray("section").forEach(sec => {
-        gsap.from(sec, {
-          opacity: 0,
-          y: 40,
-          duration: 0.75,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sec,
-            start: "top 88%",
-            toggleActions: "play none none none"
-          }
-        });
+      // Side-to-Center Scroll Animations: Hero Briefing Card
+      gsap.from(".hero-card-left", {
+        x: -80,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#overview",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+      gsap.from(".hero-card-right", {
+        x: 80,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#overview",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+
+      // Dropdown Table Container: Smooth Center-In
+      gsap.from("#dropdown-table-container", {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#dropdown-table-container",
+          start: "top 90%",
+          toggleActions: "play none none none"
+        }
       });
 
       // Animate Hero Counters
@@ -969,18 +930,97 @@
           if (el) el.innerText = wktCounter.val.toFixed(2) + " Runs";
         }
       });
+
+      // Side-to-Center Scroll Animations: RR War Room Units
+      gsap.from("#war-room-batting-section", {
+        x: -90,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#war-room-batting-section",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+      gsap.from("#war-room-bowling-section", {
+        x: 90,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#war-room-bowling-section",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+
+      // Side-to-Center Scroll Animations: Sensitivity Simulator
+      gsap.from("#sim-controls-card", {
+        x: -80,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#simulator",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+      gsap.from("#sim-results-card", {
+        x: 80,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#simulator",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+
+      // Side-to-Center Scroll Animations: Radar Deep-Dive
+      gsap.from("#radar-controls-card", {
+        x: -80,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#radar",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
+      gsap.from("#radar-chart-card", {
+        x: 80,
+        opacity: 0,
+        duration: 0.85,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#radar",
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      });
     }
 
     function animatePodiumCards() {
       if (typeof gsap === 'undefined') return;
-      gsap.from(".podium-card", {
-        opacity: 0,
-        y: 35,
-        scale: 0.94,
-        stagger: 0.15,
-        duration: 0.7,
-        ease: "power2.out"
-      });
+      const cards = document.querySelectorAll(".podium-card");
+      if (cards.length >= 3) {
+        gsap.fromTo(cards[0], { x: -90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.85, ease: "power3.out" });
+        gsap.fromTo(cards[1], { y: 50, scale: 0.9, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.85, ease: "power3.out", delay: 0.1 });
+        gsap.fromTo(cards[2], { x: 90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.85, ease: "power3.out", delay: 0.05 });
+      } else {
+        gsap.from(".podium-card", {
+          opacity: 0,
+          y: 35,
+          scale: 0.94,
+          stagger: 0.15,
+          duration: 0.7,
+          ease: "power2.out"
+        });
+      }
     }
 
     // Interactive Simulator
