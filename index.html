@@ -34,11 +34,13 @@
     }
   </script>
 
-  <!-- Google Fonts & Chart.js -->
+  <!-- Google Fonts, Chart.js & GSAP Animation Suite -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <style>
     body {
@@ -52,7 +54,6 @@
     .rr-card {
       background: #FFFFFF;
       border: 1px solid #E2E8F0;
-      border-radius: 10px;
       box-shadow: 0 4px 12px rgba(11, 37, 69, 0.06);
     }
     .rr-badge-pink {
@@ -70,6 +71,55 @@
       color: #854D0E;
       border: 1px solid #FEF08A;
     }
+
+    /* Remove all rounded corners everywhere across buttons, cards, containers, inputs */
+    button, 
+    .btn, 
+    input, 
+    select, 
+    .rr-card:not(.podium-card), 
+    .rr-gradient,
+    .hero-stat-box,
+    .badge,
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td,
+    [class*="rounded"]:not(.podium-element) {
+      border-radius: 0px !important;
+    }
+
+    /* Podium Cards - exact replica of user reference image */
+    .podium-card {
+      border-radius: 16px !important;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .podium-card:hover {
+      transform: translateY(-4px);
+    }
+    .podium-gold {
+      background: linear-gradient(140deg, #3A2604 0%, #66450D 28%, #8E6518 52%, #5C3C08 78%, #2B1902 100%);
+      border: 2px solid #F3C644 !important;
+      box-shadow: 0 0 24px rgba(243, 198, 68, 0.45), inset 0 0 16px rgba(243, 198, 68, 0.22);
+    }
+    .podium-silver {
+      background: linear-gradient(140deg, #1C2430 0%, #3B4758 28%, #5C6C82 52%, #384455 78%, #141A24 100%);
+      border: 2px solid #E2E8F0 !important;
+      box-shadow: 0 0 24px rgba(226, 232, 240, 0.45), inset 0 0 16px rgba(226, 232, 240, 0.22);
+    }
+    .podium-bronze {
+      background: linear-gradient(140deg, #331707 0%, #5E2F13 28%, #8A461F 52%, #56280E 78%, #220C03 100%);
+      border: 2px solid #E07A5F !important;
+      box-shadow: 0 0 24px rgba(224, 122, 95, 0.45), inset 0 0 16px rgba(224, 122, 95, 0.22);
+    }
+    .podium-element {
+      border-radius: 9999px !important;
+    }
+
     /* Custom scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
@@ -80,11 +130,13 @@
     }
     ::-webkit-scrollbar-thumb {
       background: #D81159;
-      border-radius: 3px;
     }
   </style>
 </head>
 <body class="min-h-screen text-slate-800 antialiased selection:bg-rr-pink selection:text-white">
+
+  <!-- GSAP Scroll Progress Indicator Bar -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-rr-pink via-rr-gold to-rr-pink z-[60] pointer-events-none" style="width: 0%;"></div>
 
   <!-- Top Navigation & Brand Bar -->
   <header class="border-b border-rr-navy-light/60 bg-rr-navy-dark sticky top-0 z-50 shadow-md">
@@ -108,7 +160,7 @@
       </nav>
 
       <div class="flex items-center gap-3">
-        <a href="report.pdf" download class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-rr-pink text-white font-medium text-xs hover:bg-rr-pink-dark transition shadow">
+        <a href="report.pdf" download class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rr-pink text-white font-medium text-xs hover:bg-rr-pink-dark transition shadow">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           Download PDF (13pp)
         </a>
@@ -128,10 +180,10 @@
       </div>
 
       <!-- Hero Briefing Card -->
-      <div class="rr-gradient rounded-xl p-6 sm:p-8 text-white border-l-4 border-rr-pink shadow-xl">
+      <div class="rr-gradient p-6 sm:p-8 text-white border-l-4 border-rr-pink shadow-xl">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div class="space-y-3 max-w-3xl">
-            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded text-xs font-semibold bg-rr-pink text-white">
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 text-xs font-semibold bg-rr-pink text-white">
               Official Round 1 Submission
             </div>
             <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
@@ -144,22 +196,22 @@
             </p>
           </div>
           <div class="grid grid-cols-2 gap-3 min-w-[280px]">
-            <div class="bg-rr-navy-dark/70 rounded-lg p-3 border border-white/10">
+            <div class="bg-rr-navy-dark/70 p-3 border border-white/10 hero-stat-box">
               <div class="text-xs text-rr-gold font-medium">Matches Scanned</div>
-              <div class="text-xl font-bold text-white font-mono">837</div>
+              <div id="hero-count-matches" class="text-xl font-bold text-white font-mono">837</div>
               <div class="text-[10px] text-slate-400">Non-DLS Senior Games</div>
             </div>
-            <div class="bg-rr-navy-dark/70 rounded-lg p-3 border border-white/10">
+            <div class="bg-rr-navy-dark/70 p-3 border border-white/10 hero-stat-box">
               <div class="text-xs text-rr-gold font-medium">Pressure Cutoff</div>
               <div class="text-xl font-bold text-white font-mono">LI ≥ 1.296</div>
               <div class="text-[10px] text-slate-400">75th Percentile Sweetspot</div>
             </div>
-            <div class="bg-rr-navy-dark/70 rounded-lg p-3 border border-white/10">
+            <div class="bg-rr-navy-dark/70 p-3 border border-white/10 hero-stat-box">
               <div class="text-xs text-rr-gold font-medium">Wicket Valuation</div>
-              <div class="text-xl font-bold text-white font-mono">2.50 Runs</div>
+              <div id="hero-count-wkt" class="text-xl font-bold text-white font-mono">2.50 Runs</div>
               <div class="text-[10px] text-slate-400">Symmetric Credit / Penalty</div>
             </div>
-            <div class="bg-rr-navy-dark/70 rounded-lg p-3 border border-white/10">
+            <div class="bg-rr-navy-dark/70 p-3 border border-white/10 hero-stat-box">
               <div class="text-xs text-rr-gold font-medium">Top 8 Invariance</div>
               <div class="text-xl font-bold text-white font-mono">4 of 4</div>
               <div class="text-[10px] text-slate-400">Robust Across Schemes</div>
@@ -174,26 +226,29 @@
     <!-- ========================================== -->
     <section id="rankings" class="space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-700/60 pb-3 gap-4">
-        <h2 class="text-lg font-bold text-white tracking-tight uppercase">Official Dropdown Rankings &amp; Player Profiles</h2>
+        <div>
+          <h2 class="text-lg font-bold text-white tracking-tight uppercase">Official Dropdown Rankings &amp; Player Profiles</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Top 10 High-Pressure Performers under Gate C03 (Minimum 180 Pressure Deliveries)</p>
+        </div>
         
         <!-- Controls: Role Toggle + Search -->
         <div class="flex items-center gap-3">
-          <div class="inline-flex rounded-lg bg-rr-navy-dark p-1 border border-slate-700 text-xs font-medium">
-            <button id="btn-role-bat" onclick="setRole('bat')" class="px-3 py-1.5 rounded-md bg-rr-pink text-white font-semibold transition">
+          <div class="inline-flex bg-rr-navy-dark p-1 border border-slate-700 text-xs font-medium">
+            <button id="btn-role-bat" onclick="setRole('bat')" class="px-3 py-1.5 bg-rr-pink text-white font-semibold transition">
               Top Batters (10)
             </button>
-            <button id="btn-role-bwl" onclick="setRole('bwl')" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition">
+            <button id="btn-role-bwl" onclick="setRole('bwl')" class="px-3 py-1.5 text-slate-300 hover:text-white transition">
               Top Bowlers (10)
             </button>
           </div>
           <div class="relative">
-            <input type="text" id="search-input" onkeyup="filterPlayers()" placeholder="Search player..." class="bg-rr-navy-dark border border-slate-700 rounded-md px-3 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-rr-pink w-40 sm:w-48">
+            <input type="text" id="search-input" onkeyup="filterPlayers()" placeholder="Search player..." class="bg-rr-navy-dark border border-slate-700 px-3 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-rr-pink w-40 sm:w-48">
           </div>
         </div>
       </div>
 
-      <!-- Player Cards Grid (Top 10) -->
-      <div id="player-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <!-- Player Cards Container: Top 3 Podium (User-Spec Image Layout) + Ranks 4-10 -->
+      <div id="player-grid-container" class="space-y-6">
         <!-- Rendered dynamically by JavaScript -->
       </div>
 
@@ -225,19 +280,22 @@
     <!-- ========================================== -->
     <section id="war-room" class="space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-700/60 pb-3 gap-4">
-        <h2 class="text-lg font-bold text-white tracking-tight uppercase">Rajasthan Royals 2027 Auction War Room</h2>
+        <div>
+          <h2 class="text-lg font-bold text-white tracking-tight uppercase">Rajasthan Royals 2027 Auction War Room</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Tactical Squad Fit, Jaipur (SMS Stadium) Synergies &amp; Role Segmentation</p>
+        </div>
         
         <!-- Tier Filter Buttons -->
-        <div class="inline-flex rounded-lg bg-rr-navy-dark p-1 border border-slate-700 text-xs font-medium">
-          <button onclick="setWarRoomFilter('all')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn active-filter" data-filter="all">All Tiers</button>
-          <button onclick="setWarRoomFilter('core')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn" data-filter="core">Retained Core</button>
-          <button onclick="setWarRoomFilter('target')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn" data-filter="target">Auction Targets</button>
-          <button onclick="setWarRoomFilter('benchmark')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn" data-filter="benchmark">Benchmark Ceiling</button>
+        <div class="inline-flex bg-rr-navy-dark p-1 border border-slate-700 text-xs font-medium">
+          <button onclick="setWarRoomFilter('all')" class="px-3 py-1.5 text-slate-300 hover:text-white transition war-filter-btn active-filter" data-filter="all">All Tiers</button>
+          <button onclick="setWarRoomFilter('core')" class="px-3 py-1.5 text-slate-300 hover:text-white transition war-filter-btn" data-filter="core">Retained Core</button>
+          <button onclick="setWarRoomFilter('target')" class="px-3 py-1.5 text-slate-300 hover:text-white transition war-filter-btn" data-filter="target">Auction Targets</button>
+          <button onclick="setWarRoomFilter('benchmark')" class="px-3 py-1.5 text-slate-300 hover:text-white transition war-filter-btn" data-filter="benchmark">Benchmark Ceiling</button>
         </div>
       </div>
 
       <!-- Jaipur / SMS Stadium Dynamics Banner -->
-      <div class="bg-slate-900 border border-slate-700/80 rounded-lg p-4 text-slate-300 text-xs leading-relaxed space-y-2">
+      <div class="bg-slate-900 border border-slate-700/80 p-4 text-slate-300 text-xs leading-relaxed space-y-2">
         <div class="flex items-center gap-2 text-rr-gold font-bold uppercase tracking-wider text-[11px]">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
           Sawai Mansingh Stadium (Jaipur) Venue Synergy Blueprint
@@ -250,9 +308,32 @@
         </p>
       </div>
 
-      <!-- War Room Cards Grid -->
-      <div id="war-room-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered by JS -->
+      <!-- Distinct Unit 1: BATTING UNIT -->
+      <div class="space-y-3 pt-2">
+        <div class="flex items-center justify-between bg-rr-navy-dark border-l-4 border-rr-pink px-4 py-2.5">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🏏</span>
+            <span class="text-xs font-extrabold text-white uppercase tracking-wider">Batting Unit — High-Pressure Targets &amp; Retentions</span>
+          </div>
+          <span id="war-room-batters-count" class="text-[11px] font-mono text-rr-pink font-bold">10 Players Evaluated</span>
+        </div>
+        <div id="war-room-batters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Distinct Unit 2: BOWLING UNIT -->
+      <div class="space-y-3 pt-4 border-t border-slate-700/40">
+        <div class="flex items-center justify-between bg-rr-navy-dark border-l-4 border-rr-gold px-4 py-2.5">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🎯</span>
+            <span class="text-xs font-extrabold text-white uppercase tracking-wider">Bowling Unit — High-Pressure Targets &amp; Spin/Pace Assets</span>
+          </div>
+          <span id="war-room-bowlers-count" class="text-[11px] font-mono text-rr-gold font-bold">10 Players Evaluated</span>
+        </div>
+        <div id="war-room-bowlers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Rendered by JS -->
+        </div>
       </div>
     </section>
 
@@ -317,10 +398,10 @@
           <div class="pt-2 border-t border-slate-200">
             <div class="text-[11px] font-bold text-slate-600 mb-2">Preset Strategies:</div>
             <div class="grid grid-cols-2 gap-2 text-[11px]">
-              <button onclick="applyPreset(50, 20, 25, 5)" class="p-1.5 border border-slate-300 rounded hover:bg-slate-50 font-medium text-slate-700">Primary Default</button>
-              <button onclick="applyPreset(50, 25, 20, 5)" class="p-1.5 border border-slate-300 rounded hover:bg-slate-50 font-medium text-slate-700">Value-Heavy</button>
-              <button onclick="applyPreset(30, 40, 25, 5)" class="p-1.5 border border-slate-300 rounded hover:bg-slate-50 font-medium text-slate-700">Process-Heavy</button>
-              <button onclick="applyPreset(35, 25, 35, 5)" class="p-1.5 border border-slate-300 rounded hover:bg-slate-50 font-medium text-slate-700">Consistency-Heavy</button>
+              <button onclick="applyPreset(50, 20, 25, 5)" class="p-1.5 border border-slate-300 hover:bg-slate-50 font-medium text-slate-700">Primary Default</button>
+              <button onclick="applyPreset(50, 25, 20, 5)" class="p-1.5 border border-slate-300 hover:bg-slate-50 font-medium text-slate-700">Value-Heavy</button>
+              <button onclick="applyPreset(30, 40, 25, 5)" class="p-1.5 border border-slate-300 hover:bg-slate-50 font-medium text-slate-700">Process-Heavy</button>
+              <button onclick="applyPreset(35, 25, 35, 5)" class="p-1.5 border border-slate-300 hover:bg-slate-50 font-medium text-slate-700">Consistency-Heavy</button>
             </div>
           </div>
         </div>
@@ -351,7 +432,7 @@
               </table>
             </div>
           </div>
-          <div class="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-600">
+          <div class="mt-4 p-3 bg-slate-50 border border-slate-200 text-[11px] text-slate-600">
             <strong>Top 8 Stability Note:</strong> Notice how Sooryavanshi, Suryakumar, Abhishek, Klaasen, Arya, Head, Rinku, and Jitesh remain inside the Top 10 across almost every slider setting, confirming empirical robustness.
           </div>
         </div>
@@ -378,21 +459,21 @@
           <div class="space-y-3">
             <div>
               <label class="text-[11px] font-bold text-rr-pink block mb-1">Player 1 (Pink)</label>
-              <select id="radar-p1" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white text-slate-800 focus:outline-none focus:border-rr-pink"></select>
+              <select id="radar-p1" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 p-1.5 bg-white text-slate-800 focus:outline-none focus:border-rr-pink"></select>
             </div>
             <div>
               <label class="text-[11px] font-bold text-rr-navy-light block mb-1">Player 2 (Navy)</label>
-              <select id="radar-p2" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white text-slate-800 focus:outline-none focus:border-rr-navy"></select>
+              <select id="radar-p2" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 p-1.5 bg-white text-slate-800 focus:outline-none focus:border-rr-navy"></select>
             </div>
             <div>
               <label class="text-[11px] font-bold text-amber-600 block mb-1">Player 3 (Gold / Optional)</label>
-              <select id="radar-p3" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white text-slate-800 focus:outline-none focus:border-amber-500">
+              <select id="radar-p3" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 p-1.5 bg-white text-slate-800 focus:outline-none focus:border-amber-500">
                 <option value="">-- None --</option>
               </select>
             </div>
           </div>
 
-          <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-600 space-y-1">
+          <div class="p-3 bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1">
             <div class="font-bold text-slate-700">Pillar Definitions:</div>
             <div>• <strong>Net Value:</strong> Expected Runs/Wickets added.</div>
             <div>• <strong>Execution:</strong> Stroke velocity / Dot suppression.</div>
@@ -424,14 +505,14 @@
         <!-- Forensic Trap 1: Gate D1 -->
         <div class="rr-card p-5 space-y-3 border-t-4 border-rr-pink">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rr-badge-pink text-rr-pink font-bold">CRITICAL DATA TRAP</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 bg-rr-badge-pink text-rr-pink font-bold">CRITICAL DATA TRAP</span>
             <span class="text-[11px] font-mono text-slate-400">Gate D1</span>
           </div>
           <h3 class="text-sm font-bold text-rr-navy">The `extras1_runs` Trap &amp; Resolution</h3>
           <p class="text-xs text-slate-600 leading-relaxed">
-            In raw <code class="text-[11px] bg-slate-100 p-0.5 rounded">ball_by_ball.csv</code>, <code class="text-[11px] bg-slate-100 p-0.5 rounded">extras1_runs</code> is a delivery type code (wide=2, bye=4, legal=6), NOT additive runs. Naive summation adds +6 runs to every legal ball.
+            In raw <code class="text-[11px] bg-slate-100 p-0.5">ball_by_ball.csv</code>, <code class="text-[11px] bg-slate-100 p-0.5">extras1_runs</code> is a delivery type code (wide=2, bye=4, legal=6), NOT additive runs. Naive summation adds +6 runs to every legal ball.
           </p>
-          <div class="p-2.5 bg-slate-50 rounded border border-slate-200 font-mono text-[11px] text-slate-700">
+          <div class="p-2.5 bg-slate-50 border border-slate-200 font-mono text-[11px] text-slate-700">
             <div>• Summing extras1: 5.2 run error</div>
             <div class="text-emerald-700 font-bold">• Gate D1 repaired: 2.6 run error</div>
           </div>
@@ -440,14 +521,14 @@
         <!-- Forensic Trap 2: Symmetric Sweep -->
         <div class="rr-card p-5 space-y-3 border-t-4 border-rr-navy-light">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rr-badge-navy text-rr-navy font-bold">EMPIRICAL ABLATION</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 bg-rr-badge-navy text-rr-navy font-bold">EMPIRICAL ABLATION</span>
             <span class="text-[11px] font-mono text-slate-400">Plateau [1.0, 3.0]</span>
           </div>
           <h3 class="text-sm font-bold text-rr-navy">Symmetric Wicket Sweep ($W_{\text{val}} = 2.50$)</h3>
           <p class="text-xs text-slate-600 leading-relaxed">
             Batters are penalized 2.50 runs per dismissal above expected; bowlers receive 2.50 runs credit. Across $W \in [1.0, 3.0]$, Top-10 overlap is stable (≥80%) and reliability flat ($\rho \approx 0.26$ to $0.28$).
           </p>
-          <div class="p-2.5 bg-slate-50 rounded border border-slate-200 font-mono text-[11px] text-slate-700">
+          <div class="p-2.5 bg-slate-50 border border-slate-200 font-mono text-[11px] text-slate-700">
             <div>• W=0:Ignores dismissals</div>
             <div>• W≥6: Variance collapse (ρ=0.16)</div>
             <div class="text-rr-pink font-bold">• W=2.5: Calibrated Midpoint</div>
@@ -457,14 +538,14 @@
         <!-- Forensic Trap 3: Bumrah Paradox -->
         <div class="rr-card p-5 space-y-3 border-t-4 border-rr-gold">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rr-badge-gold text-amber-800 font-bold">DOMAIN LOGIC</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 bg-rr-badge-gold text-amber-800 font-bold">DOMAIN LOGIC</span>
             <span class="text-[11px] font-mono text-slate-400">Bumrah Paradox</span>
           </div>
           <h3 class="text-sm font-bold text-rr-navy">Resolving the Jasprit Bumrah Paradox</h3>
           <p class="text-xs text-slate-600 leading-relaxed">
             Opponents treat Bumrah's death overs as a storm to weather. While raw wickets are 17 in 455 balls, his boundary rate is only 16.9% (vs 20.8% league avg) with cohort-topping Rebound Composure (+0.483 PBC).
           </p>
-          <div class="p-2.5 bg-slate-50 rounded border border-slate-200 font-mono text-[11px] text-slate-700">
+          <div class="p-2.5 bg-slate-50 border border-slate-200 font-mono text-[11px] text-slate-700">
             <div>• High-Pressure Economy: 7.78</div>
             <div>• Boundary Suppression: 83.1%</div>
             <div class="text-emerald-700 font-bold">• Ranked #2 Bowler Under Pressure</div>
@@ -503,16 +584,17 @@
       initSimulator();
       initRadarSelectors();
       initRadarChart();
+      initGsapAnimations();
     });
 
     function setRole(role) {
       currentRole = role;
       document.getElementById('btn-role-bat').className = role === 'bat' 
-        ? 'px-3 py-1.5 rounded-md bg-rr-pink text-white font-semibold transition' 
-        : 'px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition';
+        ? 'px-3 py-1.5 bg-rr-pink text-white font-semibold transition' 
+        : 'px-3 py-1.5 text-slate-300 hover:text-white transition';
       document.getElementById('btn-role-bwl').className = role === 'bwl' 
-        ? 'px-3 py-1.5 rounded-md bg-rr-pink text-white font-semibold transition' 
-        : 'px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition';
+        ? 'px-3 py-1.5 bg-rr-pink text-white font-semibold transition' 
+        : 'px-3 py-1.5 text-slate-300 hover:text-white transition';
       
       document.getElementById('sim-role-disp').innerText = role === 'bat' ? 'Batters' : 'Bowlers';
       renderPlayerCards();
@@ -531,47 +613,134 @@
       const cards = document.querySelectorAll('.player-card-item');
       cards.forEach(card => {
         const name = card.getAttribute('data-name').toLowerCase();
-        card.style.display = name.includes(q) ? 'block' : 'none';
+        card.style.display = name.includes(q) ? 'flex' : 'none';
       });
     }
 
-    // Render Top 10 Player Cards
+    // Render Top 10 Player Cards: Top 3 Podium (User-Spec Reference Image) + Ranks 4-10
     function renderPlayerCards() {
-      const grid = document.getElementById('player-grid');
-      const data = getDataset().slice(0, 10);
-      
-      grid.innerHTML = data.map(p => {
-        const rankColor = p.rank === 1 ? 'border-amber-400 bg-amber-50/40' : p.rank === 2 ? 'border-slate-300 bg-slate-50/40' : p.rank === 3 ? 'border-amber-600 bg-orange-50/40' : 'border-slate-200 bg-white';
-        const rankBadge = p.rank <= 3 ? 'bg-rr-pink text-white' : 'bg-rr-navy text-white';
-        const metric1 = currentRole === 'bat' ? `SR: <span class="font-bold">${p.hp_sr}</span>` : `Econ: <span class="font-bold">${p.hp_econ}</span>`;
-        const metric2 = currentRole === 'bat' ? `Net RAE: <span class="font-bold text-emerald-700">${p.net_rae100 > 0 ? '+' : ''}${p.net_rae100}</span>` : `Net RSAE: <span class="font-bold text-emerald-700">${p.net_rsae24 > 0 ? '+' : ''}${p.net_rsae24}</span>`;
-        
-        return `
-          <div class="rr-card p-4 flex flex-col justify-between border-t-2 ${rankColor} player-card-item hover:shadow-md transition" data-name="${p.player_name}">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-black ${rankBadge}">#${p.rank}</span>
-                <span class="text-[10px] font-mono text-slate-500 font-bold">ID: ${p.player_id}</span>
-              </div>
-              <div class="flex items-center gap-3 mb-3">
-                <img src="${p.image}" alt="${p.player_name}" onerror="this.onerror=null; this.src='images/players/avatar_fallback.svg';" class="w-14 h-14 rounded-full object-cover border-2 border-rr-navy/20 shadow-sm bg-slate-100 flex-shrink-0">
-                <div class="min-w-0">
-                  <div class="text-sm font-bold text-slate-900 leading-snug truncate">${p.player_name}</div>
-                  <div class="text-[11px] text-rr-pink font-semibold">${p.rr_fit.tier}</div>
+      const container = document.getElementById('player-grid-container');
+      const dataset = getDataset();
+      const top3 = dataset.slice(0, 3);
+      const rest = dataset.slice(3, 10);
+
+      // Top 3 Podium Cards HTML (Strictly replicating user reference image)
+      const podiumHtml = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          ${top3.map((p, idx) => {
+            const themeClass = p.rank === 1 ? 'podium-gold' : p.rank === 2 ? 'podium-silver' : 'podium-bronze';
+            const medalGradient = p.rank === 1 
+              ? 'bg-gradient-to-b from-amber-200 via-amber-400 to-amber-600 text-slate-950 border-amber-200' 
+              : p.rank === 2 
+              ? 'bg-gradient-to-b from-slate-100 via-slate-300 to-slate-400 text-slate-950 border-white' 
+              : 'bg-gradient-to-b from-amber-600 via-orange-400 to-amber-800 text-white border-orange-300';
+            const ringBorder = p.rank === 1 ? 'border-amber-300' : p.rank === 2 ? 'border-slate-300' : 'border-orange-300';
+            const idColor = p.rank === 1 ? 'text-amber-200/90' : p.rank === 2 ? 'text-slate-300/90' : 'text-orange-200/90';
+            const tierColor = p.rank === 1 ? 'text-amber-200' : p.rank === 2 ? 'text-slate-200' : 'text-orange-200';
+            const metric1 = currentRole === 'bat' 
+              ? `SR: <span class="font-bold text-white">${p.hp_sr}</span>` 
+              : `Econ: <span class="font-bold text-white">${p.hp_econ}</span>`;
+            const metric2 = currentRole === 'bat' 
+              ? `Net RAE: <span class="font-bold text-emerald-400 font-mono">${p.net_rae100 > 0 ? '+' : ''}${p.net_rae100}</span>` 
+              : `Net RSAE: <span class="font-bold text-emerald-400 font-mono">${p.net_rsae24 > 0 ? '+' : ''}${p.net_rsae24}</span>`;
+
+            return `
+              <div class="podium-card ${themeClass} p-5 flex flex-col justify-between player-card-item" data-name="${p.player_name}">
+                <div>
+                  <!-- Top Row: Coin Badge & Monospace ID -->
+                  <div class="flex items-center justify-between mb-4">
+                    <div class="medal-coin podium-element w-9 h-9 flex items-center justify-center font-black text-sm shadow-md border ${medalGradient}">
+                      #${p.rank}
+                    </div>
+                    <div class="font-mono text-xs font-bold ${idColor} tracking-wider">
+                      ID: ${p.player_id}
+                    </div>
+                  </div>
+
+                  <!-- Middle Row: Cutout Avatar Ring & Player Name / Subtitle -->
+                  <div class="flex items-center gap-3.5 mb-4">
+                    <img src="${p.image}" alt="${p.player_name}" onerror="this.onerror=null; this.src='images/players/avatar_fallback.svg';" class="avatar-ring podium-element w-14 h-14 object-cover border-2 ${ringBorder} shadow-lg bg-slate-900 flex-shrink-0">
+                    <div class="min-w-0">
+                      <div class="text-base font-bold text-white leading-tight truncate drop-shadow-sm">${p.player_name}</div>
+                      <div class="text-xs font-medium ${tierColor} mt-0.5 truncate">${p.rr_fit.tier}</div>
+                    </div>
+                  </div>
+
+                  <!-- Monospace Stats Block -->
+                  <div class="border-t border-white/20 pt-3 space-y-1.5 text-xs font-mono text-slate-100">
+                    <div class="flex justify-between">
+                      <span class="opacity-80">Pressure Score:</span>
+                      <span class="font-bold text-white">${p.score}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="opacity-80">Boot Certainty:</span>
+                      <span class="font-bold text-white">${p.p_top10}%</span>
+                    </div>
+                    <div class="flex justify-between pt-0.5 border-t border-white/10">
+                      <span>${metric1}</span>
+                      <span>${metric2}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-3.5 pt-2 text-[10px] text-white/70 border-t border-white/10 flex justify-between items-center font-sans">
+                  <span><strong>RR Fit:</strong> ${p.rr_fit.role_rr}</span>
+                  <span class="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 bg-black/30 text-white">Podium #${p.rank}</span>
                 </div>
               </div>
-              <div class="space-y-1.5 py-2 border-t border-b border-slate-100 text-xs font-mono">
-                <div class="flex justify-between text-slate-600"><span>Pressure Score:</span><span class="font-bold text-rr-navy">${p.score}</span></div>
-                <div class="flex justify-between text-slate-600"><span>Boot Certainty:</span><span class="font-bold text-rr-pink">${p.p_top10}%</span></div>
-                <div class="flex justify-between text-slate-600"><span>${metric1}</span><span>${metric2}</span></div>
-              </div>
-            </div>
-            <div class="mt-3 pt-2 text-[10px] text-slate-500 leading-tight">
-              <strong>RR Role:</strong> ${p.rr_fit.role_rr}
-            </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      // Ranks 4 to 10 HTML (Sharp Brutalist / Rectangular Cards)
+      const restHtml = `
+        <div class="space-y-3 pt-2">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-slate-700/60 pb-2">
+            <span>Ranks 4–10 Core Starters &amp; Specialists</span>
+            <span class="font-mono text-[11px] text-rr-pink font-semibold">180+ Pressure Deliveries Verified</span>
           </div>
-        `;
-      }).join('');
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            ${rest.map(p => {
+              const metric1 = currentRole === 'bat' 
+                ? `SR: <span class="font-bold">${p.hp_sr}</span>` 
+                : `Econ: <span class="font-bold">${p.hp_econ}</span>`;
+              const metric2 = currentRole === 'bat' 
+                ? `Net RAE: <span class="font-bold text-emerald-700 font-mono">${p.net_rae100 > 0 ? '+' : ''}${p.net_rae100}</span>` 
+                : `Net RSAE: <span class="font-bold text-emerald-700 font-mono">${p.net_rsae24 > 0 ? '+' : ''}${p.net_rsae24}</span>`;
+
+              return `
+                <div class="rr-card p-4 flex flex-col justify-between border-t-2 border-rr-navy player-card-item hover:shadow-lg transition bg-white" data-name="${p.player_name}">
+                  <div>
+                    <div class="flex items-center justify-between mb-2.5">
+                      <span class="px-2 py-0.5 text-xs font-mono font-black bg-rr-navy text-white">#${p.rank}</span>
+                      <span class="text-[10px] font-mono text-slate-500 font-bold">ID: ${p.player_id}</span>
+                    </div>
+                    <div class="flex items-center gap-3 mb-3">
+                      <img src="${p.image}" alt="${p.player_name}" onerror="this.onerror=null; this.src='images/players/avatar_fallback.svg';" class="w-12 h-12 object-cover border border-slate-300 bg-slate-100 flex-shrink-0">
+                      <div class="min-w-0">
+                        <div class="text-sm font-bold text-slate-900 leading-snug truncate">${p.player_name}</div>
+                        <div class="text-[11px] text-rr-pink font-semibold truncate">${p.rr_fit.tier}</div>
+                      </div>
+                    </div>
+                    <div class="space-y-1.5 py-2 border-t border-b border-slate-100 text-xs font-mono">
+                      <div class="flex justify-between text-slate-600"><span>Pressure Score:</span><span class="font-bold text-rr-navy">${p.score}</span></div>
+                      <div class="flex justify-between text-slate-600"><span>Boot Certainty:</span><span class="font-bold text-rr-pink">${p.p_top10}%</span></div>
+                      <div class="flex justify-between text-slate-600"><span>${metric1}</span><span>${metric2}</span></div>
+                    </div>
+                  </div>
+                  <div class="mt-2.5 pt-2 text-[10px] text-slate-500 leading-tight">
+                    <strong>RR Role:</strong> ${p.rr_fit.role_rr}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = podiumHtml + restHtml;
+      animatePodiumCards();
     }
 
     // Render Official Dropdown Table
@@ -649,50 +818,71 @@
       }
     }
 
-    // Render RR War Room Cards
+    // Render RR War Room Cards (Separated Distinctly into Batters and Bowlers)
     function setWarRoomFilter(filter) {
       currentWarFilter = filter;
       document.querySelectorAll('.war-filter-btn').forEach(btn => {
         btn.className = btn.getAttribute('data-filter') === filter
-          ? 'px-2.5 py-1 rounded-md bg-rr-pink text-white font-semibold transition war-filter-btn'
-          : 'px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn';
+          ? 'px-3 py-1.5 bg-rr-pink text-white font-semibold transition war-filter-btn active-filter'
+          : 'px-3 py-1.5 text-slate-300 hover:text-white transition war-filter-btn';
       });
       renderWarRoom();
     }
 
     function renderWarRoom() {
-      const grid = document.getElementById('war-room-grid');
-      const allPlayers = [...RR_DASHBOARD_DATA.batters.slice(0, 10), ...RR_DASHBOARD_DATA.bowlers.slice(0, 10)];
-      
-      const filtered = currentWarFilter === 'all' 
-        ? allPlayers 
-        : allPlayers.filter(p => p.rr_fit.bucket === currentWarFilter);
+      const batGrid = document.getElementById('war-room-batters-grid');
+      const bwlGrid = document.getElementById('war-room-bowlers-grid');
+      const batCountEl = document.getElementById('war-room-batters-count');
+      const bwlCountEl = document.getElementById('war-room-bowlers-count');
 
-      grid.innerHTML = filtered.map(p => {
+      const allBatters = RR_DASHBOARD_DATA.batters.slice(0, 10);
+      const allBowlers = RR_DASHBOARD_DATA.bowlers.slice(0, 10);
+
+      const filteredBatters = currentWarFilter === 'all' 
+        ? allBatters 
+        : allBatters.filter(p => p.rr_fit.bucket === currentWarFilter);
+
+      const filteredBowlers = currentWarFilter === 'all' 
+        ? allBowlers 
+        : allBowlers.filter(p => p.rr_fit.bucket === currentWarFilter);
+
+      batCountEl.innerText = `${filteredBatters.length} Batter${filteredBatters.length === 1 ? '' : 's'} Evaluated`;
+      bwlCountEl.innerText = `${filteredBowlers.length} Bowler${filteredBowlers.length === 1 ? '' : 's'} Evaluated`;
+
+      function createWarCard(p, isBatter) {
+        const roleBadge = isBatter
+          ? `<span class="px-2 py-0.5 text-[10px] font-bold bg-rr-pink text-white uppercase tracking-wider">🏏 BATTER</span>`
+          : `<span class="px-2 py-0.5 text-[10px] font-bold bg-rr-navy text-white uppercase tracking-wider">🎯 BOWLER • ${p.style}</span>`;
+
         const badgeColor = p.rr_fit.bucket === 'core' 
           ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
           : p.rr_fit.bucket === 'benchmark' 
           ? 'bg-amber-100 text-amber-800 border-amber-300' 
           : 'bg-rose-100 text-rose-800 border-rose-300';
-        
+
         return `
-          <div class="rr-card p-4 space-y-3 border-t-2 border-rr-navy">
+          <div class="rr-card p-4 space-y-3 border-t-2 ${isBatter ? 'border-rr-pink' : 'border-rr-gold'} bg-white">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+              ${roleBadge}
+              <span class="text-xs font-mono font-bold text-slate-800">#${p.rank} • Score ${p.score}</span>
+            </div>
+
             <div class="flex items-center justify-between">
-              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${badgeColor}">
+              <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-bold border ${badgeColor}">
                 ${p.rr_fit.tier}
               </span>
-              <span class="text-xs font-mono font-bold text-rr-navy">#${p.rank} ${p.role}</span>
+              <span class="text-[10px] font-mono text-slate-400 font-bold">ID: ${p.player_id}</span>
             </div>
             
             <div class="flex items-center gap-3">
-              <img src="${p.image}" alt="${p.player_name}" onerror="this.onerror=null; this.src='images/players/avatar_fallback.svg';" class="w-12 h-12 rounded-full object-cover border border-slate-200">
-              <div>
-                <div class="text-sm font-bold text-slate-900">${p.player_name}</div>
-                <div class="text-xs text-rr-pink font-semibold">${p.rr_fit.role_rr}</div>
+              <img src="${p.image}" alt="${p.player_name}" onerror="this.onerror=null; this.src='images/players/avatar_fallback.svg';" class="w-12 h-12 object-cover border border-slate-200 flex-shrink-0">
+              <div class="min-w-0">
+                <div class="text-sm font-bold text-slate-900 truncate">${p.player_name}</div>
+                <div class="text-xs text-rr-pink font-semibold truncate">${p.rr_fit.role_rr}</div>
               </div>
             </div>
 
-            <div class="text-xs text-slate-600 space-y-2 pt-2 border-t border-slate-100 leading-relaxed">
+            <div class="text-xs text-slate-600 space-y-2 pt-2 border-t border-slate-100 leading-relaxed font-sans">
               <div>
                 <strong class="text-slate-800">Jaipur (SMS Stadium) Synergy:</strong>
                 <p class="text-[11px] text-slate-600 mt-0.5">${p.rr_fit.sms_synergy}</p>
@@ -704,7 +894,93 @@
             </div>
           </div>
         `;
-      }).join('');
+      }
+
+      batGrid.innerHTML = filteredBatters.length > 0 
+        ? filteredBatters.map(p => createWarCard(p, true)).join('')
+        : `<div class="col-span-full p-4 bg-slate-900 border border-slate-700 text-slate-400 text-xs text-center font-mono">No batters in this filter tier.</div>`;
+
+      bwlGrid.innerHTML = filteredBowlers.length > 0 
+        ? filteredBowlers.map(p => createWarCard(p, false)).join('')
+        : `<div class="col-span-full p-4 bg-slate-900 border border-slate-700 text-slate-400 text-xs text-center font-mono">No bowlers in this filter tier.</div>`;
+    }
+
+    // GSAP Scroll Animation Engine
+    function initGsapAnimations() {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Scroll Progress Indicator Scrub
+      gsap.to("#scroll-progress", {
+        width: "100%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: "body",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.15
+        }
+      });
+
+      // Section Fade and Slide Up on Scroll
+      gsap.utils.toArray("section").forEach(sec => {
+        gsap.from(sec, {
+          opacity: 0,
+          y: 40,
+          duration: 0.75,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sec,
+            start: "top 88%",
+            toggleActions: "play none none none"
+          }
+        });
+      });
+
+      // Animate Hero Counters
+      const matchCounter = { val: 0 };
+      gsap.to(matchCounter, {
+        val: 837,
+        duration: 1.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#hero-count-matches",
+          start: "top 95%",
+          toggleActions: "play none none none"
+        },
+        onUpdate: () => {
+          const el = document.getElementById("hero-count-matches");
+          if (el) el.innerText = Math.round(matchCounter.val);
+        }
+      });
+
+      const wktCounter = { val: 0 };
+      gsap.to(wktCounter, {
+        val: 2.50,
+        duration: 1.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#hero-count-wkt",
+          start: "top 95%",
+          toggleActions: "play none none none"
+        },
+        onUpdate: () => {
+          const el = document.getElementById("hero-count-wkt");
+          if (el) el.innerText = wktCounter.val.toFixed(2) + " Runs";
+        }
+      });
+    }
+
+    function animatePodiumCards() {
+      if (typeof gsap === 'undefined') return;
+      gsap.from(".podium-card", {
+        opacity: 0,
+        y: 35,
+        scale: 0.94,
+        stagger: 0.15,
+        duration: 0.7,
+        ease: "power2.out"
+      });
     }
 
     // Interactive Simulator
