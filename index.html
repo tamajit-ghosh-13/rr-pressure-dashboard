@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rajasthan Royals — SupeRR Selector Season 2 Auction Intelligence Dashboard</title>
+  
+  <!-- Tailwind CSS CDN with RR Theme Config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rr: {
+              navy: '#0B2545',
+              'navy-dark': '#061528',
+              'navy-light': '#134074',
+              pink: '#D81159',
+              'pink-dark': '#A30840',
+              'pink-light': '#FF2E79',
+              gold: '#D4AF37',
+              'gold-light': '#F3C644',
+              slate: '#F8FAFC',
+              card: '#FFFFFF'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Consolas', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Chart.js -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      background-color: #07192F;
+      color: #1E293B;
+      font-family: 'Inter', sans-serif;
+    }
+    .rr-gradient {
+      background: linear-gradient(135deg, #0B2545 0%, #134074 100%);
+    }
+    .rr-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(11, 37, 69, 0.06);
+    }
+    .rr-badge-pink {
+      background-color: #FFF1F2;
+      color: #D81159;
+      border: 1px solid #FFE4E6;
+    }
+    .rr-badge-navy {
+      background-color: #EFF6FF;
+      color: #0B2545;
+      border: 1px solid #DBEAFE;
+    }
+    .rr-badge-gold {
+      background-color: #FEF9C3;
+      color: #854D0E;
+      border: 1px solid #FEF08A;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B2545;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D81159;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 antialiased selection:bg-rr-pink selection:text-white">
+
+  <!-- Top Navigation & Brand Bar -->
+  <header class="border-b border-rr-navy-light/60 bg-rr-navy-dark sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-lg bg-rr-pink flex items-center justify-center font-black text-white text-lg tracking-wider shadow">
+          RR
+        </div>
+        <div>
+          <div class="text-xs uppercase tracking-wider font-semibold text-rr-gold">Rajasthan Royals • SupeRR Selector</div>
+          <div class="text-base font-bold text-white leading-tight">Auction Intelligence &amp; Pressure Analytics</div>
+        </div>
+      </div>
+
+      <!-- Quick Jump Nav -->
+      <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-slate-300">
+        <a href="#overview" class="hover:text-rr-gold transition">// 01. Overview</a>
+        <a href="#rankings" class="hover:text-rr-gold transition">// 02. Rankings</a>
+        <a href="#war-room" class="hover:text-rr-gold transition">// 03. RR War Room</a>
+        <a href="#simulator" class="hover:text-rr-gold transition">// 04. Simulator</a>
+        <a href="#radar" class="hover:text-rr-gold transition">// 05. Radar Deep-Dive</a>
+        <a href="#methodology" class="hover:text-rr-gold transition">// 06. Methodology</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="report.pdf" download class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-rr-pink text-white font-medium text-xs hover:bg-rr-pink-dark transition shadow">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Download PDF (13pp)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+    <!-- ========================================== -->
+    <!-- // 01. EXECUTIVE BRIEFING & KEY METRICS     -->
+    <!-- ========================================== -->
+    <section id="overview" class="space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold text-rr-gold tracking-widest">// 01.</span>
+          <h2 class="text-lg font-bold text-white tracking-tight uppercase">Executive Briefing &amp; High-Pressure Architecture</h2>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Gate C03 • Primary Production Model</span>
+      </div>
+
+      <!-- Hero Briefing Card -->
+      <div class="rr-gradient rounded-xl p-6 sm:p-8 text-white border-l-4 border-rr-pink shadow-xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-3 max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded text-xs font-semibold bg-rr-pink text-white">
+              Official Round 1 Submission
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+              Identifying Clutch Match-Winners for the IPL 2027 Auction
+            </h1>
+            <p class="text-sm text-slate-200 leading-relaxed">
+              Evaluating <strong>837 matches (189,555 deliveries)</strong> across 2022–2026 IPL and senior T20Is using a leak-free 
+              <strong>Expected Leverage Index (<span class="font-mono">LI ≥ 1.296</span>, 75th percentile)</strong> derived from out-of-fold Win Probability models (<span class="font-mono">AUC = 0.9003</span>). 
+              Operating under <strong>Symmetric Wicket Valuation (<span class="font-mono">W_val = 2.50 runs</span>)</strong> and independent match-ANOVA shrinkage to filter small-sample dismissal noise.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-3 min-w-[280px]">
+            <div class="bg-rr-navy-dark/70 rounded-lg p-3 border border-white/10">
+              <div class="text-xs text-rr-gold font-medium">Matches Scanned</div>
+              <div class="text-xl font-bold text-white font-mono">837</div>
+              <div class="text-[10px] text-slate-400">Non-DLS Senior Games</div>
+            </div>
+            <div class="bg-rr-navy-dark/70 rounded-lg p-3 border border-white/10">
+              <div class="text-xs text-rr-gold font-medium">Pressure Cutoff</div>
+              <div class="text-xl font-bold text-white font-mono">LI ≥ 1.296</div>
+              <div class="text-[10px] text-slate-400">75th Percentile Sweetspot</div>
+            </div>
+            <div class="bg-rr-navy-dark/70 rounded-lg p-3 border border-white/10">
+              <div class="text-xs text-rr-gold font-medium">Wicket Valuation</div>
+              <div class="text-xl font-bold text-white font-mono">2.50 Runs</div>
+              <div class="text-[10px] text-slate-400">Symmetric Credit / Penalty</div>
+            </div>
+            <div class="bg-rr-navy-dark/70 rounded-lg p-3 border border-white/10">
+              <div class="text-xs text-rr-gold font-medium">Top 8 Invariance</div>
+              <div class="text-xl font-bold text-white font-mono">4 of 4</div>
+              <div class="text-[10px] text-slate-400">Robust Across Schemes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- // 02. OFFICIAL DROPDOWN RANKINGS           -->
+    <!-- ========================================== -->
+    <section id="rankings" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-700/60 pb-3 gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold text-rr-gold tracking-widest">// 02.</span>
+          <h2 class="text-lg font-bold text-white tracking-tight uppercase">Official Dropdown Rankings &amp; Player Profiles</h2>
+        </div>
+        
+        <!-- Controls: Role Toggle + Search -->
+        <div class="flex items-center gap-3">
+          <div class="inline-flex rounded-lg bg-rr-navy-dark p-1 border border-slate-700 text-xs font-medium">
+            <button id="btn-role-bat" onclick="setRole('bat')" class="px-3 py-1.5 rounded-md bg-rr-pink text-white font-semibold transition">
+              Top Batters (10)
+            </button>
+            <button id="btn-role-bwl" onclick="setRole('bwl')" class="px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition">
+              Top Bowlers (10)
+            </button>
+          </div>
+          <div class="relative">
+            <input type="text" id="search-input" onkeyup="filterPlayers()" placeholder="Search player..." class="bg-rr-navy-dark border border-slate-700 rounded-md px-3 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-rr-pink w-40 sm:w-48">
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Cards Grid (Top 10) -->
+      <div id="player-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+      <!-- Complete Dropdown Table View -->
+      <div class="rr-card overflow-hidden">
+        <div class="px-5 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <div class="text-xs font-bold text-rr-navy uppercase tracking-wider" id="table-title">
+            Top 10 Batters — Dropdown Audited Specifications
+          </div>
+          <div class="text-[11px] text-slate-500 font-mono">100% Match with Unstop Dropdowns</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-rr-navy text-white text-[11px] font-semibold uppercase tracking-wider">
+              <tr id="table-header-row">
+                <!-- Dynamic headers -->
+              </tr>
+            </thead>
+            <tbody id="table-body" class="divide-y divide-slate-200 font-mono">
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- // 03. RAJASTHAN ROYALS 2027 AUCTION WAR ROOM -->
+    <!-- ========================================== -->
+    <section id="war-room" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-700/60 pb-3 gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold text-rr-gold tracking-widest">// 03.</span>
+          <h2 class="text-lg font-bold text-white tracking-tight uppercase">Rajasthan Royals 2027 Auction War Room</h2>
+        </div>
+        
+        <!-- Tier Filter Buttons -->
+        <div class="inline-flex rounded-lg bg-rr-navy-dark p-1 border border-slate-700 text-xs font-medium">
+          <button onclick="setWarRoomFilter('all')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn active-filter" data-filter="all">All Tiers</button>
+          <button onclick="setWarRoomFilter('core')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn" data-filter="core">Retained Core</button>
+          <button onclick="setWarRoomFilter('target')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn" data-filter="target">Auction Targets</button>
+          <button onclick="setWarRoomFilter('benchmark')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn" data-filter="benchmark">Benchmark Ceiling</button>
+        </div>
+      </div>
+
+      <!-- Jaipur / SMS Stadium Dynamics Banner -->
+      <div class="bg-slate-900 border border-slate-700/80 rounded-lg p-4 text-slate-300 text-xs leading-relaxed space-y-2">
+        <div class="flex items-center gap-2 text-rr-gold font-bold uppercase tracking-wider text-[11px]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          Sawai Mansingh Stadium (Jaipur) Venue Synergy Blueprint
+        </div>
+        <p>
+          Jaipur features spacious square boundaries (68–72m, straight 75m) and a true-bounce surface that grips during the middle overs. 
+          Batters who mis-time their strokes get routinely caught in the deep outfield, creating immense value for spinners with 
+          <strong>Boundary Suppression ≥ 85%</strong> (Narine, Rashid, Theekshana, Varun) and batters combining pure boundary power with 
+          <strong>Dot Ball Avoidance ≥ 70%</strong> (Sooryavanshi, Klaasen, Rinku, David).
+        </p>
+      </div>
+
+      <!-- War Room Cards Grid -->
+      <div id="war-room-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- // 04. INTERACTIVE SENSITIVITY & SIMULATOR  -->
+    <!-- ========================================== -->
+    <section id="simulator" class="space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold text-rr-gold tracking-widest">// 04.</span>
+          <h2 class="text-lg font-bold text-white tracking-tight uppercase">Interactive Sensitivity &amp; Weight Simulator</h2>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Dynamic Client-Side Recalculation</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Slider Controls Card -->
+        <div class="rr-card p-5 space-y-5">
+          <div class="border-b border-slate-200 pb-2">
+            <h3 class="text-xs font-bold text-rr-navy uppercase tracking-wider">Custom Pillar Weight Calibration</h3>
+            <p class="text-[11px] text-slate-500">Adjust weights to test ranking sensitivity in real-time.</p>
+          </div>
+
+          <!-- Slider 1: Net Value -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Net Value vs Expected (<span class="font-mono text-rr-pink">z_val</span>)</span>
+              <span id="val-weight-disp" class="font-mono text-rr-pink font-bold">50%</span>
+            </div>
+            <input type="range" id="slider-val" min="10" max="80" value="50" oninput="updateSimulator()" class="w-full accent-rr-pink cursor-pointer">
+            <div class="text-[10px] text-slate-400">Symmetric W_val = 2.5 runs credited/penalized</div>
+          </div>
+
+          <!-- Slider 2: Process Execution -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Stroke / Process Dynamics (<span class="font-mono text-rr-navy">z_exec</span>)</span>
+              <span id="exec-weight-disp" class="font-mono text-rr-navy font-bold">20%</span>
+            </div>
+            <input type="range" id="slider-exec" min="5" max="50" value="20" oninput="updateSimulator()" class="w-full accent-rr-navy cursor-pointer">
+            <div class="text-[10px] text-slate-400">SRAE + DBA (Batters) / Dot% + PBC + Bound Supp (Bowlers)</div>
+          </div>
+
+          <!-- Slider 3: Match Consistency -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Match Consistency (<span class="font-mono text-amber-600">z_cons</span>)</span>
+              <span id="cons-weight-disp" class="font-mono text-amber-600 font-bold">25%</span>
+            </div>
+            <input type="range" id="slider-cons" min="5" max="50" value="25" oninput="updateSimulator()" class="w-full accent-amber-600 cursor-pointer">
+            <div class="text-[10px] text-slate-400">Positive match win rate &amp; match-level Sharpe ratio</div>
+          </div>
+
+          <!-- Slider 4: Own-Baseline Delta -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Own-Baseline Pressure Lift (<span class="font-mono text-emerald-600">z_delta</span>)</span>
+              <span id="delta-weight-disp" class="font-mono text-emerald-600 font-bold">5%</span>
+            </div>
+            <input type="range" id="slider-delta" min="0" max="25" value="5" oninput="updateSimulator()" class="w-full accent-emerald-600 cursor-pointer">
+            <div class="text-[10px] text-slate-400">Performance differential in clutch vs non-clutch balls</div>
+          </div>
+
+          <!-- Preset Buttons -->
+          <div class="pt-2 border-t border-slate-200">
+            <div class="text-[11px] font-bold text-slate-600 mb-2">Preset Strategies:</div>
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+              <button onclick="applyPreset(50, 20, 25, 5)" class="p-1.5 border border-slate-300 rounded hover:bg-slate-50 font-medium text-slate-700">Primary Default</button>
+              <button onclick="applyPreset(50, 25, 20, 5)" class="p-1.5 border border-slate-300 rounded hover:bg-slate-50 font-medium text-slate-700">Value-Heavy</button>
+              <button onclick="applyPreset(30, 40, 25, 5)" class="p-1.5 border border-slate-300 rounded hover:bg-slate-50 font-medium text-slate-700">Process-Heavy</button>
+              <button onclick="applyPreset(35, 25, 35, 5)" class="p-1.5 border border-slate-300 rounded hover:bg-slate-50 font-medium text-slate-700">Consistency-Heavy</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulated Ranks Output Card -->
+        <div class="lg:col-span-2 rr-card p-5 overflow-hidden flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+              <h3 class="text-xs font-bold text-rr-navy uppercase tracking-wider">Simulated Top 10 Order (<span id="sim-role-disp">Batters</span>)</h3>
+              <div class="text-[11px] text-slate-500 font-mono">Dynamic Re-Ranking</div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead class="bg-slate-100 text-slate-700 font-semibold uppercase text-[10px]">
+                  <tr>
+                    <th class="p-2 text-center w-12">Sim Rank</th>
+                    <th class="p-2">Player</th>
+                    <th class="p-2 text-center">Base Rank</th>
+                    <th class="p-2 text-center">Net Val</th>
+                    <th class="p-2 text-center">Exec</th>
+                    <th class="p-2 text-center">Consistency</th>
+                    <th class="p-2 text-center">Sim Score</th>
+                  </tr>
+                </thead>
+                <tbody id="sim-tbody" class="divide-y divide-slate-200 font-mono text-[11px]">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-600">
+            <strong>Top 8 Stability Note:</strong> Notice how Sooryavanshi, Suryakumar, Abhishek, Klaasen, Arya, Head, Rinku, and Jitesh remain inside the Top 10 across almost every slider setting, confirming empirical robustness.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- // 05. 5-PILLAR RADAR & PLAYER DIAGNOSTICS -->
+    <!-- ========================================== -->
+    <section id="radar" class="space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold text-rr-gold tracking-widest">// 05.</span>
+          <h2 class="text-lg font-bold text-white tracking-tight uppercase">5-Pillar Radar &amp; Head-to-Head Diagnostics</h2>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Multi-Attribute Comparison</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Player Selectors -->
+        <div class="rr-card p-5 space-y-4">
+          <div class="border-b border-slate-200 pb-2">
+            <h3 class="text-xs font-bold text-rr-navy uppercase tracking-wider">Select Players to Compare</h3>
+            <p class="text-[11px] text-slate-500">Compare up to 3 players across all 5 pressure pillars.</p>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-[11px] font-bold text-rr-pink block mb-1">Player 1 (Pink)</label>
+              <select id="radar-p1" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white text-slate-800 focus:outline-none focus:border-rr-pink"></select>
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-rr-navy-light block mb-1">Player 2 (Navy)</label>
+              <select id="radar-p2" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white text-slate-800 focus:outline-none focus:border-rr-navy"></select>
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-amber-600 block mb-1">Player 3 (Gold / Optional)</label>
+              <select id="radar-p3" onchange="updateRadarChart()" class="w-full text-xs border border-slate-300 rounded p-1.5 bg-white text-slate-800 focus:outline-none focus:border-amber-500">
+                <option value="">-- None --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-[11px] text-slate-600 space-y-1">
+            <div class="font-bold text-slate-700">Pillar Definitions:</div>
+            <div>• <strong>Net Value:</strong> Expected Runs/Wickets added.</div>
+            <div>• <strong>Execution:</strong> Stroke velocity / Dot suppression.</div>
+            <div>• <strong>Consistency:</strong> Match win-rate &amp; Sharpe.</div>
+            <div>• <strong>Pressure Lift:</strong> Delta over non-clutch baseline.</div>
+            <div>• <strong>Certainty:</strong> 1,000-bootstrap confidence tier.</div>
+          </div>
+        </div>
+
+        <!-- Radar Canvas Card -->
+        <div class="lg:col-span-2 rr-card p-5 flex flex-col items-center justify-center">
+          <div class="w-full max-w-lg h-[360px]">
+            <canvas id="radarCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- // 06. METHODOLOGICAL FOUNDATIONS           -->
+    <!-- ========================================== -->
+    <section id="methodology" class="space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold text-rr-gold tracking-widest">// 06.</span>
+          <h2 class="text-lg font-bold text-white tracking-tight uppercase">Methodological Foundations &amp; Gate D1 Validation</h2>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Forensic Traps Audit</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Forensic Trap 1: Gate D1 -->
+        <div class="rr-card p-5 space-y-3 border-t-4 border-rr-pink">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rr-badge-pink text-rr-pink font-bold">CRITICAL DATA TRAP</span>
+            <span class="text-[11px] font-mono text-slate-400">Gate D1</span>
+          </div>
+          <h3 class="text-sm font-bold text-rr-navy">The `extras1_runs` Trap &amp; Resolution</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            In raw <code class="text-[11px] bg-slate-100 p-0.5 rounded">ball_by_ball.csv</code>, <code class="text-[11px] bg-slate-100 p-0.5 rounded">extras1_runs</code> is a delivery type code (wide=2, bye=4, legal=6), NOT additive runs. Naive summation adds +6 runs to every legal ball.
+          </p>
+          <div class="p-2.5 bg-slate-50 rounded border border-slate-200 font-mono text-[11px] text-slate-700">
+            <div>• Summing extras1: 5.2 run error</div>
+            <div class="text-emerald-700 font-bold">• Gate D1 repaired: 2.6 run error</div>
+          </div>
+        </div>
+
+        <!-- Forensic Trap 2: Symmetric Sweep -->
+        <div class="rr-card p-5 space-y-3 border-t-4 border-rr-navy-light">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rr-badge-navy text-rr-navy font-bold">EMPIRICAL ABLATION</span>
+            <span class="text-[11px] font-mono text-slate-400">Plateau [1.0, 3.0]</span>
+          </div>
+          <h3 class="text-sm font-bold text-rr-navy">Symmetric Wicket Sweep ($W_{\text{val}} = 2.50$)</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Batters are penalized 2.50 runs per dismissal above expected; bowlers receive 2.50 runs credit. Across $W \in [1.0, 3.0]$, Top-10 overlap is stable (≥80%) and reliability flat ($\rho \approx 0.26$ to $0.28$).
+          </p>
+          <div class="p-2.5 bg-slate-50 rounded border border-slate-200 font-mono text-[11px] text-slate-700">
+            <div>• W=0:Ignores dismissals</div>
+            <div>• W≥6: Variance collapse (ρ=0.16)</div>
+            <div class="text-rr-pink font-bold">• W=2.5: Calibrated Midpoint</div>
+          </div>
+        </div>
+
+        <!-- Forensic Trap 3: Bumrah Paradox -->
+        <div class="rr-card p-5 space-y-3 border-t-4 border-rr-gold">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rr-badge-gold text-amber-800 font-bold">DOMAIN LOGIC</span>
+            <span class="text-[11px] font-mono text-slate-400">Bumrah Paradox</span>
+          </div>
+          <h3 class="text-sm font-bold text-rr-navy">Resolving the Jasprit Bumrah Paradox</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Opponents treat Bumrah's death overs as a storm to weather. While raw wickets are 17 in 455 balls, his boundary rate is only 16.9% (vs 20.8% league avg) with cohort-topping Rebound Composure (+0.483 PBC).
+          </p>
+          <div class="p-2.5 bg-slate-50 rounded border border-slate-200 font-mono text-[11px] text-slate-700">
+            <div>• High-Pressure Economy: 7.78</div>
+            <div>• Boundary Suppression: 83.1%</div>
+            <div class="text-emerald-700 font-bold">• Ranked #2 Bowler Under Pressure</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="pt-8 border-t border-slate-700/60 text-slate-400 text-xs flex flex-col sm:flex-row items-center justify-between gap-4 pb-12">
+      <div>
+        <span class="text-white font-bold">Rajasthan Royals SupeRR Selector Season 2</span> • Round 1 Analytics Dossier
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="report.pdf" class="hover:text-rr-pink transition">Methodology Report (PDF)</a>
+        <span>•</span>
+        <a href="https://github.com/tamajit-ghosh-13/RR_auction" class="hover:text-rr-gold transition" target="_blank">GitHub Repository</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Load Data and Application Scripts -->
+  <script src="data.js"></script>
+  <script>
+    // State
+    let currentRole = 'bat';
+    let currentWarFilter = 'all';
+    let radarChart = null;
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      renderPlayerCards();
+      renderTable();
+      renderWarRoom();
+      initSimulator();
+      initRadarSelectors();
+      initRadarChart();
+    });
+
+    function setRole(role) {
+      currentRole = role;
+      document.getElementById('btn-role-bat').className = role === 'bat' 
+        ? 'px-3 py-1.5 rounded-md bg-rr-pink text-white font-semibold transition' 
+        : 'px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition';
+      document.getElementById('btn-role-bwl').className = role === 'bwl' 
+        ? 'px-3 py-1.5 rounded-md bg-rr-pink text-white font-semibold transition' 
+        : 'px-3 py-1.5 rounded-md text-slate-300 hover:text-white transition';
+      
+      document.getElementById('sim-role-disp').innerText = role === 'bat' ? 'Batters' : 'Bowlers';
+      renderPlayerCards();
+      renderTable();
+      updateSimulator();
+      initRadarSelectors();
+      updateRadarChart();
+    }
+
+    function getDataset() {
+      return currentRole === 'bat' ? RR_DASHBOARD_DATA.batters : RR_DASHBOARD_DATA.bowlers;
+    }
+
+    function filterPlayers() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      const cards = document.querySelectorAll('.player-card-item');
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name').toLowerCase();
+        card.style.display = name.includes(q) ? 'block' : 'none';
+      });
+    }
+
+    // Render Top 10 Player Cards
+    function renderPlayerCards() {
+      const grid = document.getElementById('player-grid');
+      const data = getDataset().slice(0, 10);
+      
+      grid.innerHTML = data.map(p => {
+        const rankColor = p.rank === 1 ? 'border-amber-400 bg-amber-50/40' : p.rank === 2 ? 'border-slate-300 bg-slate-50/40' : p.rank === 3 ? 'border-amber-600 bg-orange-50/40' : 'border-slate-200 bg-white';
+        const rankBadge = p.rank <= 3 ? 'bg-rr-pink text-white' : 'bg-rr-navy text-white';
+        const metric1 = currentRole === 'bat' ? `SR: <span class="font-bold">${p.hp_sr}</span>` : `Econ: <span class="font-bold">${p.hp_econ}</span>`;
+        const metric2 = currentRole === 'bat' ? `Net RAE: <span class="font-bold text-emerald-700">${p.net_rae100 > 0 ? '+' : ''}${p.net_rae100}</span>` : `Net RSAE: <span class="font-bold text-emerald-700">${p.net_rsae24 > 0 ? '+' : ''}${p.net_rsae24}</span>`;
+        
+        return `
+          <div class="rr-card p-4 flex flex-col justify-between border-t-2 ${rankColor} player-card-item hover:shadow-md transition" data-name="${p.player_name}">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-black ${rankBadge}">#${p.rank}</span>
+                <span class="text-[10px] font-mono text-slate-500 font-bold">ID: ${p.player_id}</span>
+              </div>
+              <div class="flex items-center gap-3 mb-3">
+                <img src="${p.image}" alt="${p.player_name}" onerror="this.onerror=null; this.src='images/players/avatar_fallback.svg';" class="w-14 h-14 rounded-full object-cover border-2 border-rr-navy/20 shadow-sm bg-slate-100 flex-shrink-0">
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-slate-900 leading-snug truncate">${p.player_name}</div>
+                  <div class="text-[11px] text-rr-pink font-semibold">${p.rr_fit.tier}</div>
+                </div>
+              </div>
+              <div class="space-y-1.5 py-2 border-t border-b border-slate-100 text-xs font-mono">
+                <div class="flex justify-between text-slate-600"><span>Pressure Score:</span><span class="font-bold text-rr-navy">${p.score}</span></div>
+                <div class="flex justify-between text-slate-600"><span>Boot Certainty:</span><span class="font-bold text-rr-pink">${p.p_top10}%</span></div>
+                <div class="flex justify-between text-slate-600"><span>${metric1}</span><span>${metric2}</span></div>
+              </div>
+            </div>
+            <div class="mt-3 pt-2 text-[10px] text-slate-500 leading-tight">
+              <strong>RR Role:</strong> ${p.rr_fit.role_rr}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render Official Dropdown Table
+    function renderTable() {
+      const headerRow = document.getElementById('table-header-row');
+      const tbody = document.getElementById('table-body');
+      const data = getDataset().slice(0, 15);
+
+      if (currentRole === 'bat') {
+        document.getElementById('table-title').innerText = 'Top 10 Batters (+ Top Challengers) — Official Dropdown Order';
+        headerRow.innerHTML = `
+          <th class="p-2.5 text-center w-12">Rank</th>
+          <th class="p-2.5">Player Name</th>
+          <th class="p-2.5 text-center">Unstop ID</th>
+          <th class="p-2.5 text-center">P(Top 10)</th>
+          <th class="p-2.5 text-center">Mean Rank</th>
+          <th class="p-2.5 text-center">HP Balls</th>
+          <th class="p-2.5 text-center">HP Runs</th>
+          <th class="p-2.5 text-center">HP SR</th>
+          <th class="p-2.5 text-center">Net RAE100</th>
+          <th class="p-2.5 text-center">SRAE</th>
+          <th class="p-2.5 text-center">DBA</th>
+          <th class="p-2.5 text-center">Score</th>
+        `;
+        tbody.innerHTML = data.map((p, idx) => `
+          <tr class="${idx < 10 ? 'hover:bg-slate-50' : 'bg-slate-50/70 opacity-80'}">
+            <td class="p-2.5 text-center font-bold ${idx === 0 ? 'text-amber-600 font-black' : idx < 3 ? 'text-rr-pink font-bold' : 'text-slate-800'}">${p.rank}</td>
+            <td class="p-2.5 font-sans font-bold text-slate-900">${p.player_name}</td>
+            <td class="p-2.5 text-center text-slate-500 font-mono">${p.player_id}</td>
+            <td class="p-2.5 text-center font-bold text-rr-pink">${p.p_top10}%</td>
+            <td class="p-2.5 text-center">${p.mean_rank}</td>
+            <td class="p-2.5 text-center">${p.hp_bf}</td>
+            <td class="p-2.5 text-center">${p.hp_runs}</td>
+            <td class="p-2.5 text-center font-bold">${p.hp_sr}</td>
+            <td class="p-2.5 text-center text-emerald-700 font-bold">${p.net_rae100 > 0 ? '+' : ''}${p.net_rae100}</td>
+            <td class="p-2.5 text-center">${p.srae > 0 ? '+' : ''}${p.srae}</td>
+            <td class="p-2.5 text-center">${p.dba}%</td>
+            <td class="p-2.5 text-center font-bold text-rr-navy">${p.score}</td>
+          </tr>
+        `).join('');
+      } else {
+        document.getElementById('table-title').innerText = 'Top 10 Bowlers (+ Top Challengers) — Official Dropdown Order';
+        headerRow.innerHTML = `
+          <th class="p-2.5 text-center w-12">Rank</th>
+          <th class="p-2.5">Player Name</th>
+          <th class="p-2.5 text-center">Unstop ID</th>
+          <th class="p-2.5 text-center">Style</th>
+          <th class="p-2.5 text-center">P(Top 10)</th>
+          <th class="p-2.5 text-center">Mean Rank</th>
+          <th class="p-2.5 text-center">HP Balls</th>
+          <th class="p-2.5 text-center">HP Wkts</th>
+          <th class="p-2.5 text-center">HP Econ</th>
+          <th class="p-2.5 text-center">Net RSAE24</th>
+          <th class="p-2.5 text-center">PBC</th>
+          <th class="p-2.5 text-center">Bound Supp</th>
+          <th class="p-2.5 text-center">Score</th>
+        `;
+        tbody.innerHTML = data.map((p, idx) => `
+          <tr class="${idx < 10 ? 'hover:bg-slate-50' : 'bg-slate-50/70 opacity-80'}">
+            <td class="p-2.5 text-center font-bold ${idx === 0 ? 'text-amber-600 font-black' : idx < 3 ? 'text-rr-pink font-bold' : 'text-slate-800'}">${p.rank}</td>
+            <td class="p-2.5 font-sans font-bold text-slate-900">${p.player_name}</td>
+            <td class="p-2.5 text-center text-slate-500 font-mono">${p.player_id}</td>
+            <td class="p-2.5 text-center text-slate-600">${p.style}</td>
+            <td class="p-2.5 text-center font-bold text-rr-pink">${p.p_top10}%</td>
+            <td class="p-2.5 text-center">${p.mean_rank}</td>
+            <td class="p-2.5 text-center">${p.hp_legal}</td>
+            <td class="p-2.5 text-center font-bold">${p.hp_wkts}</td>
+            <td class="p-2.5 text-center font-bold">${p.hp_econ}</td>
+            <td class="p-2.5 text-center text-emerald-700 font-bold">${p.net_rsae24 > 0 ? '+' : ''}${p.net_rsae24}</td>
+            <td class="p-2.5 text-center">${p.pbc > 0 ? '+' : ''}${p.pbc}</td>
+            <td class="p-2.5 text-center">${p.boundary_supp}%</td>
+            <td class="p-2.5 text-center font-bold text-rr-navy">${p.score}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // Render RR War Room Cards
+    function setWarRoomFilter(filter) {
+      currentWarFilter = filter;
+      document.querySelectorAll('.war-filter-btn').forEach(btn => {
+        btn.className = btn.getAttribute('data-filter') === filter
+          ? 'px-2.5 py-1 rounded-md bg-rr-pink text-white font-semibold transition war-filter-btn'
+          : 'px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition war-filter-btn';
+      });
+      renderWarRoom();
+    }
+
+    function renderWarRoom() {
+      const grid = document.getElementById('war-room-grid');
+      const allPlayers = [...RR_DASHBOARD_DATA.batters.slice(0, 10), ...RR_DASHBOARD_DATA.bowlers.slice(0, 10)];
+      
+      const filtered = currentWarFilter === 'all' 
+        ? allPlayers 
+        : allPlayers.filter(p => p.rr_fit.bucket === currentWarFilter);
+
+      grid.innerHTML = filtered.map(p => {
+        const badgeColor = p.rr_fit.bucket === 'core' 
+          ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
+          : p.rr_fit.bucket === 'benchmark' 
+          ? 'bg-amber-100 text-amber-800 border-amber-300' 
+          : 'bg-rose-100 text-rose-800 border-rose-300';
+        
+        return `
+          <div class="rr-card p-4 space-y-3 border-t-2 border-rr-navy">
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${badgeColor}">
+                ${p.rr_fit.tier}
+              </span>
+              <span class="text-xs font-mono font-bold text-rr-navy">#${p.rank} ${p.role}</span>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <img src="${p.image}" alt="${p.player_name}" onerror="this.onerror=null; this.src='images/players/avatar_fallback.svg';" class="w-12 h-12 rounded-full object-cover border border-slate-200">
+              <div>
+                <div class="text-sm font-bold text-slate-900">${p.player_name}</div>
+                <div class="text-xs text-rr-pink font-semibold">${p.rr_fit.role_rr}</div>
+              </div>
+            </div>
+
+            <div class="text-xs text-slate-600 space-y-2 pt-2 border-t border-slate-100 leading-relaxed">
+              <div>
+                <strong class="text-slate-800">Jaipur (SMS Stadium) Synergy:</strong>
+                <p class="text-[11px] text-slate-600 mt-0.5">${p.rr_fit.sms_synergy}</p>
+              </div>
+              <div>
+                <strong class="text-slate-800">Squad Gap Solved:</strong>
+                <p class="text-[11px] text-slate-600 mt-0.5">${p.rr_fit.need_solved}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Interactive Simulator
+    function initSimulator() {
+      updateSimulator();
+    }
+
+    function applyPreset(val, exec, cons, delta) {
+      document.getElementById('slider-val').value = val;
+      document.getElementById('slider-exec').value = exec;
+      document.getElementById('slider-cons').value = cons;
+      document.getElementById('slider-delta').value = delta;
+      updateSimulator();
+    }
+
+    function updateSimulator() {
+      const wVal = parseFloat(document.getElementById('slider-val').value);
+      const wExec = parseFloat(document.getElementById('slider-exec').value);
+      const wCons = parseFloat(document.getElementById('slider-cons').value);
+      const wDelta = parseFloat(document.getElementById('slider-delta').value);
+
+      document.getElementById('val-weight-disp').innerText = wVal + '%';
+      document.getElementById('exec-weight-disp').innerText = wExec + '%';
+      document.getElementById('cons-weight-disp').innerText = wCons + '%';
+      document.getElementById('delta-weight-disp').innerText = wDelta + '%';
+
+      const tot = wVal + wExec + wCons + wDelta;
+      const nwVal = wVal / tot;
+      const nwExec = wExec / tot;
+      const nwCons = wCons / tot;
+      const nwDelta = wDelta / tot;
+
+      const data = getDataset().map(p => {
+        const simScore = (p.z_val * nwVal + p.z_exec * nwExec + p.z_consistency * nwCons + p.z_delta * nwDelta);
+        return {
+          ...p,
+          simScoreRaw: simScore
+        };
+      });
+
+      // Scale to 0-100
+      const scores = data.map(d => d.simScoreRaw);
+      const minS = Math.min(...scores);
+      const maxS = Math.max(...scores);
+      const scaled = data.map(d => ({
+        ...d,
+        simScore: Math.round(((d.simScoreRaw - minS) / (maxS - minS)) * 1000) / 10
+      })).sort((a, b) => b.simScore - a.simScore);
+
+      const tbody = document.getElementById('sim-tbody');
+      tbody.innerHTML = scaled.slice(0, 10).map((p, idx) => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-2 text-center font-bold text-rr-pink">#${idx + 1}</td>
+          <td class="p-2 font-sans font-bold text-slate-900">${p.player_name}</td>
+          <td class="p-2 text-center text-slate-500">#${p.rank}</td>
+          <td class="p-2 text-center">${p.z_val > 0 ? '+' : ''}${p.z_val}</td>
+          <td class="p-2 text-center">${p.z_exec > 0 ? '+' : ''}${p.z_exec}</td>
+          <td class="p-2 text-center">${p.z_consistency > 0 ? '+' : ''}${p.z_consistency}</td>
+          <td class="p-2 text-center font-bold text-rr-navy">${p.simScore.toFixed(1)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Radar Chart & Selectors
+    function initRadarSelectors() {
+      const data = getDataset().slice(0, 15);
+      const p1 = document.getElementById('radar-p1');
+      const p2 = document.getElementById('radar-p2');
+      const p3 = document.getElementById('radar-p3');
+
+      p1.innerHTML = data.map(p => `<option value="${p.player_id}" ${p.rank === 1 ? 'selected' : ''}>#${p.rank} ${p.player_name}</option>`).join('');
+      p2.innerHTML = data.map(p => `<option value="${p.player_id}" ${p.rank === 2 ? 'selected' : ''}>#${p.rank} ${p.player_name}</option>`).join('');
+      p3.innerHTML = `<option value="">-- None --</option>` + data.map(p => `<option value="${p.player_id}" ${p.rank === 3 ? 'selected' : ''}>#${p.rank} ${p.player_name}</option>`).join('');
+    }
+
+    function initRadarChart() {
+      const ctx = document.getElementById('radarCanvas').getContext('2d');
+      radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Net Value', 'Process Execution', 'Match Consistency', 'Pressure Delta', 'Bootstrap Certainty'],
+          datasets: []
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { display: false },
+              grid: { color: '#E2E8F0' },
+              pointLabels: {
+                font: { size: 10, family: 'Inter', weight: 600 },
+                color: '#1E293B'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { font: { size: 11, family: 'Inter', weight: 600 } }
+            }
+          }
+        }
+      });
+      updateRadarChart();
+    }
+
+    function updateRadarChart() {
+      if (!radarChart) return;
+      const data = getDataset();
+      const id1 = parseInt(document.getElementById('radar-p1').value);
+      const id2 = parseInt(document.getElementById('radar-p2').value);
+      const id3Val = document.getElementById('radar-p3').value;
+      const id3 = id3Val ? parseInt(id3Val) : null;
+
+      const p1 = data.find(p => p.player_id === id1);
+      const p2 = data.find(p => p.player_id === id2);
+      const p3 = id3 ? data.find(p => p.player_id === id3) : null;
+
+      function toScale(val, min, max) {
+        return Math.max(10, Math.min(100, Math.round(((val - min) / (max - min)) * 90 + 10)));
+      }
+
+      function getPoints(p) {
+        if (!p) return [0, 0, 0, 0, 0];
+        return [
+          toScale(p.z_val, -2.5, 3.5),
+          toScale(p.z_exec, -2.5, 3.5),
+          toScale(p.z_consistency, -2.5, 3.5),
+          toScale(p.z_delta, -2.5, 3.5),
+          p.p_top10
+        ];
+      }
+
+      const datasets = [];
+      if (p1) {
+        datasets.push({
+          label: `#${p1.rank} ${p1.player_name}`,
+          data: getPoints(p1),
+          backgroundColor: 'rgba(216, 17, 89, 0.2)',
+          borderColor: '#D81159',
+          borderWidth: 2,
+          pointBackgroundColor: '#D81159'
+        });
+      }
+      if (p2) {
+        datasets.push({
+          label: `#${p2.rank} ${p2.player_name}`,
+          data: getPoints(p2),
+          backgroundColor: 'rgba(11, 37, 69, 0.2)',
+          borderColor: '#0B2545',
+          borderWidth: 2,
+          pointBackgroundColor: '#0B2545'
+        });
+      }
+      if (p3) {
+        datasets.push({
+          label: `#${p3.rank} ${p3.player_name}`,
+          data: getPoints(p3),
+          backgroundColor: 'rgba(212, 175, 55, 0.2)',
+          borderColor: '#D4AF37',
+          borderWidth: 2,
+          pointBackgroundColor: '#D4AF37'
+        });
+      }
+
+      radarChart.data.datasets = datasets;
+      radarChart.update();
+    }
+  </script>
+</body>
+</html>
